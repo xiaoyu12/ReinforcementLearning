@@ -62,9 +62,22 @@ class Gomoku(GameState):
         st.nn_input = np.copy(self.nn_input)
         return st
 
+    def is_legal(self, action):
+        a, b = action
+        if not 0 <= a <= self.w :
+            return False
+        if not 0 <= b <= self.w :
+            return False
+        try:
+            if not self.board[a][b] == 0:
+                return False
+        except IndexError:
+            return False
+        return True
+    
     def move(self, action):
         a, b = action
-        assert 0 <= a <= self.w and 0 <= b <= self.w and self.board[a][b] == 0
+        assert (0 <= a <= self.w and 0 <= b <= self.w and self.board[a][b] == 0)
         self.board[a][b] = self.current_player
         self.player_just_moved = self.current_player
         self.current_player = 3 - self.current_player

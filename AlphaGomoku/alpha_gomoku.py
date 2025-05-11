@@ -6,16 +6,18 @@ from collections import deque
 from gomoku import Gomoku
 from mcts import MCTS
 from neural_network import Residual_CNN, Simple_CNN
+from gui import GUI
 
 #======================
 # Configuration
 #======================
+show_gui = True
 # 8x8
-game_board_width = 8
-mcts_playout_itermax_train = 400
-mcts_playout_itermax_play = 1000
-model_file = 'Simple_CNN_8x8_3000'
-policy_network = Simple_CNN # or Residual_CNN
+#game_board_width = 8
+#mcts_playout_itermax_train = 400
+#mcts_playout_itermax_play = 1000
+#model_file = 'Residual_CNN_8x8_3000'
+policy_network = Residual_CNN #Simple_CNN or Residual_CNN
 #======================
 # 19x19
 # game_board_width = 19
@@ -23,6 +25,15 @@ policy_network = Simple_CNN # or Residual_CNN
 # mcts_playout_itermax_play = 1000
 # model_file = 'Simple_CNN_19x19_3000'
 # policy_network = Simple_CNN
+#======================
+
+#======================
+# 15x15
+game_board_width = 15
+mcts_playout_itermax_train = 800
+mcts_playout_itermax_play = 1000
+model_file = 'Residual_CNN_15x15_3000'
+policy_network = Residual_CNN
 #======================
 
 def random_play(game):
@@ -51,9 +62,13 @@ def play_game():
             action, _ = mcts_player.get_move(game)
         else: # Player O
             action = human_play()
+            while not game.is_legal(action):
+                print("[*] Invalid move, please try again")
+                action = human_play()
         
         game.move(action)
         mcts_player.update_with_move(action, game)
+        GUI.display(game.board)
 
         print("[*] Player %s move: %s\n" % (['X', 'O'][game.player_just_moved-1], action))
 
