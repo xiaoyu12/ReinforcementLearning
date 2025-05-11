@@ -14,11 +14,13 @@ class Board(tkinter.Frame):
         self.board_size = board_size
 
         # draw lines
+        self.step = (590 - 30) / (board_size - 1)
+        font_size = 24 if board_size < 10 else 18
         for i in range(board_size):
-            self.board_canvas.create_line(30, 30 + 40 * i, 590, 30 + 40 * i, width=3)
-            self.board_canvas.create_line(30 + 40 * i, 30, 30 + 40 * i, 590, width=3)
-            self.board_canvas.create_text(30 + 40 * i, 30, font=('consolas bold', 18), text=str(i), fill='white')
-            self.board_canvas.create_text(30, 30 + 40 * i, font=('consolas bold', 18), text=str(i), fill='white')
+            self.board_canvas.create_line(30, 30 + self.step * i, 590, 30 + self.step * i, width=3)
+            self.board_canvas.create_line(30 + self.step * i, 30, 30 + self.step * i, 590, width=3)
+            self.board_canvas.create_text(30 + self.step * i, 30, font=('consolas bold', 18), text=str(i), fill='white')
+            self.board_canvas.create_text(30, 30 + self.step * i, font=('consolas bold', 18), text=str(i), fill='white')
 
         self.board_canvas.pack()
 
@@ -30,8 +32,9 @@ class Board(tkinter.Frame):
     # to draw a piece: up left x = 15 + 40*(x_cords - 1), y = 15 + 40*(y_cords - 1)
     #                  down right x = 45 + 40*(x_cords - 1), y = 45 + 40*(y_cords - 1)
     def draw_piece(self, x_cords, y_cords, color):
-        self.board_canvas.create_oval(15 + 40 * (y_cords - 1), 15 + 40 * (x_cords - 1), 45 + 40 * (y_cords - 1),
-                                      45 + 40 * (x_cords - 1), fill=color, width=2, tags='pieces')
+        self.board_canvas.create_oval(15 + self.step * (y_cords - 1), 15 + self.step * (x_cords - 1), 
+                                      45 + self.step * (y_cords - 1), 45 + self.step * (x_cords - 1), 
+                                      fill=color, width=2, tags='pieces')
 
     def redraw_board(self, state):
         # clear prev state
@@ -49,8 +52,7 @@ def display(state):
     app.redraw_board(state)
     app.update()
 
-
 root = tkinter.Tk()
 root.geometry('620x620')
 root.resizable(0, 0)
-app = Board(15, root)
+app = Board(8, root)

@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Suppress TensorFlow warnings
 
 class LossHistory(Callback):
     def __init__(self):
@@ -39,15 +39,15 @@ class LossHistory(Callback):
         plt.close(fig)
 
 class NetworkModel:
-    def __init__(self):
-        pass
+    def __init__(self, verbose=0):
+        self.verbose = verbose
 
     def train(self, states, targets):
         # model_log = TensorBoard(log_dir='./logs')
         return self.model.fit(states, targets, verbose=self.verbose, callbacks=[self.loss_history])
 
     def pred(self, x):
-        return self.model.predict(x)
+        return self.model.predict(x, verbose=self.verbose)
 
     def load(self, name):
         return self.model.load_weights('models/{}.h5'.format(name))

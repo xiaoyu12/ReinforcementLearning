@@ -13,10 +13,10 @@ from gui import GUI
 #======================
 show_gui = True
 # 8x8
-#game_board_width = 8
-#mcts_playout_itermax_train = 400
-#mcts_playout_itermax_play = 1000
-#model_file = 'Residual_CNN_8x8_3000'
+game_board_width = 8
+mcts_playout_itermax_train = 400
+mcts_playout_itermax_play = 1000
+model_file = 'Residual_CNN_8x8_3000'
 policy_network = Residual_CNN #Simple_CNN or Residual_CNN
 #======================
 # 19x19
@@ -29,20 +29,27 @@ policy_network = Residual_CNN #Simple_CNN or Residual_CNN
 
 #======================
 # 15x15
-game_board_width = 15
-mcts_playout_itermax_train = 800
-mcts_playout_itermax_play = 1000
-model_file = 'Residual_CNN_15x15_3000'
-policy_network = Residual_CNN
+# game_board_width = 9
+# mcts_playout_itermax_train = 800
+# mcts_playout_itermax_play = 1000
+# model_file = 'Residual_CNN_9x9_5000'
+# policy_network = Residual_CNN
 #======================
 
 def random_play(game):
     return random.choice(game.actions())
 
 def human_play():
-    t = input('[*] Your turn (i j): ')
-    a, b = t.split(' ')
-    i, j = int(a), int(b)
+    valid_moves = False
+    while not valid_moves:
+        t = input('[*] Your turn (i j): ')
+        try: 
+            a, b = t.split(' ')
+            i, j = int(a), int(b)
+        except ValueError:
+            print("[*] Invalid move, please try again")
+            continue
+        valid_moves = True
     return (i, j)
 
 def play_game():
@@ -129,11 +136,12 @@ def augment_data(play_data):
     
 
 def train():
-    game_episode_num = 3000
+    game_episode_num = 5000
     selfplay_batch_size = 1
     data_buffer_size = 10000
     check_step = 10
     train_batch_size = 512
+    model_save_step = 1000
 
     data_buffer = deque(maxlen=data_buffer_size)
 
