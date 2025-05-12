@@ -7,16 +7,17 @@ from gomoku import Gomoku
 from mcts import MCTS
 from neural_network import Residual_CNN, Simple_CNN
 from gui import GUI
+import os
 
 #======================
 # Configuration
 #======================
-show_gui = True
-# 8x8
-game_board_width = 8
-mcts_playout_itermax_train = 400
-mcts_playout_itermax_play = 1000
-model_file = 'Residual_CNN_8x8_3000'
+# show_gui = True
+# # 8x8
+# game_board_width = 8
+# mcts_playout_itermax_train = 400
+# mcts_playout_itermax_play = 1000
+# model_file = 'Residual_CNN_8x8_3000'
 policy_network = Residual_CNN #Simple_CNN or Residual_CNN
 #======================
 # 19x19
@@ -29,11 +30,11 @@ policy_network = Residual_CNN #Simple_CNN or Residual_CNN
 
 #======================
 # 15x15
-# game_board_width = 9
-# mcts_playout_itermax_train = 800
-# mcts_playout_itermax_play = 1000
-# model_file = 'Residual_CNN_9x9_5000'
-# policy_network = Residual_CNN
+game_board_width = 15
+mcts_playout_itermax_train = 800
+mcts_playout_itermax_play = 1000
+model_file = 'Residual_CNN_15x15_3000'
+policy_network = Residual_CNN
 #======================
 
 def random_play(game):
@@ -136,17 +137,20 @@ def augment_data(play_data):
     
 
 def train():
-    game_episode_num = 5000
+    game_episode_num = 3000
     selfplay_batch_size = 1
     data_buffer_size = 10000
     check_step = 10
-    train_batch_size = 512
+    train_batch_size = 128
     model_save_step = 1000
 
     data_buffer = deque(maxlen=data_buffer_size)
 
     game = Gomoku(game_board_width)
     policy = policy_network(input_dim=game.nn_input.shape, output_dim=game.w**2)
+    if os.path.exists("models/"+model_file+".h5"):
+        print('[*] Load previous model')
+        policy.load(model_file)
     mcts_player = MCTS(policy, mcts_playout_itermax_train)
     winner_num = [0] * 3
 
